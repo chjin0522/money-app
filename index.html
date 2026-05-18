@@ -110,22 +110,6 @@ button:active{
   background:#10b981;
 }
 
-.pad{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:15px;
-}
-
-.pad button{
-  height:72px;
-  border-radius:20px;
-  background:#374151;
-  color:white;
-  font-size:26px;
-  font-weight:700;
-}
-
 .action-row{
   display:flex;
   gap:10px;
@@ -226,7 +210,6 @@ button:active{
   <button class="minus" onclick="quickMinus(500)">-500</button>
   <button class="minus" onclick="quickMinus(1000)">-1,000</button>
   <button class="minus" onclick="quickMinus(1500)">-1,500</button>
-
   <button class="minus" onclick="quickMinus(2000)">-2,000</button>
   <button class="minus" onclick="quickMinus(5000)">-5,000</button>
 
@@ -286,7 +269,7 @@ button:active{
 <script>
 
 let money = 0;
-let historyData = JSON.parse(localStorage.getItem("history")) || [];
+let historyData = [];
 
 updateUI();
 renderHistory();
@@ -294,35 +277,53 @@ renderHistory();
 function save(){
 
   saveMoneyToFirebase(money);
+  saveHistoryToFirebase(historyData);
 
 }
 
 function updateUI(){
-  const balance = document.getElementById("balance");
-  balance.innerText = money.toLocaleString() + "원";
+
+  const balance =
+    document.getElementById("balance");
+
+  balance.innerText =
+    money.toLocaleString() + "원";
 }
 
 function shake(){
-  const card = document.querySelector(".card");
+
+  const card =
+    document.querySelector(".card");
+
   card.classList.add("shake");
 
   setTimeout(()=>{
+
     card.classList.remove("shake");
+
   },150);
 
   if(navigator.vibrate){
+
     navigator.vibrate(30);
   }
 }
 
 function setStartMoney(){
-  const value = Number(document.getElementById("startMoney").value);
+
+  const value = Number(
+    document.getElementById("startMoney").value
+  );
 
   if(!value) return;
 
   money = value;
 
-  addHistory("초기 금액 설정", value, true);
+  addHistory(
+    "초기 금액 설정",
+    value,
+    true
+  );
 
   save();
   updateUI();
@@ -331,18 +332,25 @@ function setStartMoney(){
 }
 
 function clearInput(){
+
   document.getElementById("display").value = "";
 }
 
 function addMoney(){
 
-  const value = Number(document.getElementById("display").value);
+  const value = Number(
+    document.getElementById("display").value
+  );
 
   if(!value) return;
 
   money += value;
 
-  addHistory("금액 추가", value, true);
+  addHistory(
+    "금액 추가",
+    value,
+    true
+  );
 
   clearInput();
 
@@ -354,15 +362,37 @@ function addMoney(){
 
 function subtractMoney(){
 
-  const value = Number(document.getElementById("display").value);
+  const value = Number(
+    document.getElementById("display").value
+  );
 
   if(!value) return;
 
   money -= value;
 
-  addHistory("금액 차감", value, false);
+  addHistory(
+    "금액 차감",
+    value,
+    false
+  );
 
   clearInput();
+
+  save();
+  updateUI();
+  renderHistory();
+  shake();
+}
+
+function quickMinus(value){
+
+  money -= value;
+
+  addHistory(
+    "빠른 차감",
+    value,
+    false
+  );
 
   save();
   updateUI();
@@ -377,39 +407,13 @@ function resetAll(){
     money = 0;
     historyData = [];
 
-    localStorage.removeItem("money");
-    localStorage.removeItem("history");
-
-    saveMoneyToFirebase(0);
-    saveHistoryToFirebase([]);
+    save();
 
     updateUI();
     renderHistory();
     clearInput();
     shake();
   }
-}
-
-function quickMinus(value){
-  money -= value;
-
-  addHistory("빠른 차감", value, false);
-
-  save();
-  updateUI();
-  renderHistory();
-  shake();
-}
-
-function quickPlus(value){
-  money += value;
-
-  addHistory("빠른 추가", value, true);
-
-  save();
-  updateUI();
-  renderHistory();
-  shake();
 }
 
 function addHistory(text, value, plus){
@@ -429,18 +433,15 @@ function addHistory(text, value, plus){
   });
 
   if(historyData.length > 30){
+
     historyData.pop();
   }
-
-  localStorage.setItem("history", JSON.stringify(historyData));
-
-  saveHistoryToFirebase(historyData);
-
 }
 
 function renderHistory(){
 
-  const history = document.getElementById("history");
+  const history =
+    document.getElementById("history");
 
   history.innerHTML = "";
 
@@ -448,15 +449,19 @@ function renderHistory(){
 
     history.innerHTML += `
       <div class="item">
+
         <div>
           <div>${item.text}</div>
           <small>${item.time}</small>
         </div>
 
         <div class="${item.plus ? 'green' : 'red'}">
+
           ${item.plus ? '+' : '-'}
-          ${item.value.toLocaleString()}원
+          ${Number(item.value).toLocaleString()}원
+
         </div>
+
       </div>
     `;
   });
@@ -484,34 +489,39 @@ function toggleHistory(){
 
 </script>
 
-<!-- Firebase script 부분 전체를 아래 코드로 교체 -->
-
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getDatabase,
   ref,
   set,
   onValue
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
 
   apiKey: "AIzaSyC-CWxDLWl0nzZV12ULV-Rek9wKskU6pbU",
 
-  authDomain: "money-app-df6c1.firebaseapp.com",
+  authDomain:
+    "money-app-df6c1.firebaseapp.com",
 
-  databaseURL: "https://money-app-df6c1-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  databaseURL:
+    "https://money-app-df6c1-default-rtdb.asia-southeast1.firebasedatabase.app/",
 
   projectId: "money-app-df6c1",
 
-  storageBucket: "money-app-df6c1.firebasestorage.app",
+  storageBucket:
+    "money-app-df6c1.firebasestorage.app",
 
-  messagingSenderId: "792123331415",
+  messagingSenderId:
+    "792123331415",
 
-  appId: "1:792123331415:web:ed0e6d989bda3a3df96412"
+  appId:
+    "1:792123331415:web:ed0e6d989bda3a3df96412"
 
 };
 
@@ -528,9 +538,9 @@ window.saveMoneyToFirebase = function(value){
 
 };
 
-window.saveHistoryToFirebase = function(history){
+window.saveHistoryToFirebase = function(value){
 
-  set(historyRef, history);
+  set(historyRef, value);
 
 };
 
@@ -541,17 +551,28 @@ window.listenMoney = function(callback){
     callback(snapshot.val() || 0);
 
   });
-
 };
 
 window.listenHistory = function(callback){
 
   onValue(historyRef, (snapshot)=>{
 
-    callback(snapshot.val() || []);
+    const data = snapshot.val();
+
+    if(!data){
+
+      callback([]);
+      return;
+    }
+
+    const historyArray =
+      Array.isArray(data)
+      ? data
+      : Object.values(data);
+
+    callback(historyArray);
 
   });
-
 };
 
 listenMoney((value)=>{
