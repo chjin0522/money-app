@@ -377,7 +377,26 @@ function subtractMoney(){
   renderHistory();
   shake();
 }
+function resetAll(){
 
+  if(confirm("초기화할까요?")){
+
+    money = 0;
+    historyData = [];
+
+    localStorage.removeItem("money");
+    localStorage.removeItem("history");
+
+    updateUI();
+    renderHistory();
+
+    document.getElementById("display").value = "";
+
+    shake();
+  }
+}
+
+  
 function quickMinus(value){
   money -= value;
 
