@@ -224,53 +224,53 @@ button:active{
 <div class="quick-buttons">
 
   <button class="minus" onclick="quickMinus(500)">-500</button>
-  <button class="minus" onclick="quickMinus(1000)">-1000</button>
-  <button class="minus" onclick="quickMinus(1500)">-1500</button>
+  <button class="minus" onclick="quickMinus(1000)">-1,000</button>
+  <button class="minus" onclick="quickMinus(1500)">-1,500</button>
 
-  <button class="minus" onclick="quickMinus(2000)">-2000</button>
-  <button class="minus" onclick="quickMinus(5000)">-5000</button>
-
-  <button class="plus" onclick="quickPlus(500)">+500</button>
-  <button class="plus" onclick="quickPlus(1000)">+1000</button>
-  <button class="plus" onclick="quickPlus(1500)">+1500</button>
-
-  <button class="plus" onclick="quickPlus(2000)">+2000</button>
-  <button class="plus" onclick="quickPlus(5000)">+5000</button>
+  <button class="minus" onclick="quickMinus(2000)">-2,000</button>
+  <button class="minus" onclick="quickMinus(5000)">-5,000</button>
 
 </div>
 
-<input type="text" id="display" readonly placeholder="숫자 입력">
-
-<div class="pad">
-  <button onclick="press(1)">1</button>
-  <button onclick="press(2)">2</button>
-  <button onclick="press(3)">3</button>
-
-  <button onclick="press(4)">4</button>
-  <button onclick="press(5)">5</button>
-  <button onclick="press(6)">6</button>
-
-  <button onclick="press(7)">7</button>
-  <button onclick="press(8)">8</button>
-  <button onclick="press(9)">9</button>
-
-  <button onclick="clearInput()">C</button>
-  <button onclick="press(0)">0</button>
-  <button onclick="backspace()">←</button>
-</div>
+<input type="number" id="display" placeholder="금액 입력">
 
 <div class="action-row">
   <button class="action-btn add-btn" onclick="addMoney()">+ 추가</button>
   <button class="action-btn sub-btn" onclick="subtractMoney()">- 차감</button>
 </div>
 
-<div class="action-row">
-  <button class="action-btn reset-btn" onclick="resetAll()">초기화</button>
-</div>
-
 <div class="history">
-  <div class="history-title">사용 내역</div>
-  <div class="history-list" id="history"></div>
+
+  <div
+    class="history-header"
+    onclick="toggleHistory()"
+    style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+      margin-top:24px;
+    "
+  >
+    <div class="history-title">사용 내역</div>
+
+    <div
+      id="toggleIcon"
+      style="
+        font-size:28px;
+        font-weight:700;
+      "
+    >
+      +
+    </div>
+  </div>
+
+  <div
+    class="history-list"
+    id="history"
+    style="display:none;"
+  ></div>
+
 </div>
 
 </div>
@@ -456,6 +456,25 @@ function resetAll(){
   }
 }
 
+  function toggleHistory(){
+
+  const history =
+    document.getElementById("history");
+
+  const icon =
+    document.getElementById("toggleIcon");
+
+  if(history.style.display === "none"){
+
+    history.style.display = "flex";
+    icon.innerText = "-";
+
+  }else{
+
+    history.style.display = "none";
+    icon.innerText = "+";
+  }
+}
 </script>
 
 </body>
