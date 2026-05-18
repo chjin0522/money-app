@@ -285,17 +285,17 @@ button:active{
 
 <script>
 
-let money = Number(localStorage.getItem("money")) || 0;
+let money = 0;
 let historyData = JSON.parse(localStorage.getItem("history")) || [];
 
 updateUI();
 renderHistory();
 
 function save(){
-  localStorage.setItem("money", money);
-  localStorage.setItem("history", JSON.stringify(historyData));
-}
 
+  saveMoneyToFirebase(money);
+
+}
 function updateUI(){
   const balance = document.getElementById("balance");
   balance.innerText = money.toLocaleString() + "원";
@@ -502,5 +502,64 @@ function resetAll(){
 }
 </script>
 
+  <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyC-CWxDLWl0nzZV12ULV-Rek9wKskU6pbU",
+
+  authDomain: "money-app-df6c1.firebaseapp.com",
+
+  databaseURL: "https://money-app-df6c1-default-rtdb.asia-southeast1.firebasedatabase.app/",
+
+  projectId: "money-app-df6c1",
+
+  storageBucket: "money-app-df6c1.firebasestorage.app",
+
+  messagingSenderId: "792123331415",
+
+  appId: "1:792123331415:web:ed0e6d989bda3a3df96412"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+const moneyRef = ref(db, "money");
+
+window.saveMoneyToFirebase = function(value){
+
+  set(moneyRef, value);
+
+};
+
+window.listenMoney = function(callback){
+
+  onValue(moneyRef, (snapshot)=>{
+
+    callback(snapshot.val() || 0);
+
+  });
+
+};
+
+</script>
+  listenMoney((value)=>{
+
+  money = value;
+
+  updateUI();
+
+});
 </body>
 </html>
