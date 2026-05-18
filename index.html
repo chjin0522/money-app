@@ -1,102 +1,459 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>금액 계산기</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <style>
-    body{
-      font-family:sans-serif;
-      text-align:center;
-      padding:40px;
-      background:#f2f2f2;
-    }
+<title>나만의 금액 앱</title>
 
-    .box{
-      background:white;
-      max-width:400px;
-      margin:auto;
-      padding:20px;
-      border-radius:20px;
-      box-shadow:0 0 10px rgba(0,0,0,0.1);
-    }
+<style>
 
-    button{
-      padding:15px;
-      margin:5px;
-      font-size:18px;
-      border:none;
-      border-radius:10px;
-      cursor:pointer;
-    }
+*{
+  box-sizing:border-box;
+}
 
-    input{
-      padding:12px;
-      width:80%;
-      font-size:18px;
-      margin:10px;
-    }
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#111827;
+  color:white;
+  display:flex;
+  justify-content:center;
+  padding:20px;
+}
 
-    #money{
-      font-size:32px;
-      margin:20px;
-      font-weight:bold;
-    }
-  </style>
+.app{
+  width:100%;
+  max-width:420px;
+}
+
+.card{
+  background:#1f2937;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.title{
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.balance-label{
+  color:#9ca3af;
+  font-size:14px;
+}
+
+.balance{
+  font-size:42px;
+  font-weight:800;
+  margin:12px 0 24px;
+  word-break:break-all;
+}
+
+.start-box{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  background:#111827;
+  border:none;
+  color:white;
+  padding:16px;
+  border-radius:16px;
+  font-size:18px;
+  outline:none;
+}
+
+button{
+  border:none;
+  cursor:pointer;
+  transition:0.12s;
+}
+
+button:active{
+  transform:scale(0.92);
+}
+
+.set-btn{
+  background:#3b82f6;
+  color:white;
+  padding:16px 18px;
+  border-radius:16px;
+  font-weight:700;
+}
+
+.quick-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.quick-buttons button{
+  padding:18px;
+  border-radius:18px;
+  font-size:18px;
+  font-weight:700;
+  color:white;
+}
+
+.minus{
+  background:#ef4444;
+}
+
+.plus{
+  background:#10b981;
+}
+
+.pad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:15px;
+}
+
+.pad button{
+  height:72px;
+  border-radius:20px;
+  background:#374151;
+  color:white;
+  font-size:26px;
+  font-weight:700;
+}
+
+.action-row{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.action-btn{
+  flex:1;
+  padding:18px;
+  border-radius:18px;
+  font-size:18px;
+  font-weight:700;
+  color:white;
+}
+
+.add-btn{
+  background:#10b981;
+}
+
+.sub-btn{
+  background:#ef4444;
+}
+
+.reset-btn{
+  background:#6b7280;
+}
+
+.history{
+  margin-top:24px;
+}
+
+.history-title{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.history-list{
+  max-height:250px;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.item{
+  background:#111827;
+  padding:14px;
+  border-radius:14px;
+  display:flex;
+  justify-content:space-between;
+  font-size:15px;
+}
+
+.green{
+  color:#34d399;
+  font-weight:700;
+}
+
+.red{
+  color:#f87171;
+  font-weight:700;
+}
+
+.shake{
+  animation:shake 0.15s linear;
+}
+
+@keyframes shake{
+  0%{transform:translateX(-2px);}
+  25%{transform:translateX(2px);}
+  50%{transform:translateX(-2px);}
+  75%{transform:translateX(2px);}
+  100%{transform:translateX(0);}
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="app">
 
-<h2>잔액 계산기</h2>
+<div class="card">
 
-<input type="number" id="start" placeholder="시작 금액">
+<div class="title">💰 내 금액 앱</div>
 
-<br>
+<div class="balance-label">현재 잔액</div>
+<div class="balance" id="balance">0원</div>
 
-<button onclick="startMoney()">설정</button>
+<div class="start-box">
+  <input type="number" id="startMoney" placeholder="시작 금액 입력">
+  <button class="set-btn" onclick="setStartMoney()">설정</button>
+</div>
 
-<div id="money">0원</div>
+<div class="quick-buttons">
 
-<button onclick="minus(1000)">-1000</button>
-<button onclick="minus(2000)">-2000</button>
-<button onclick="minus(5000)">-5000</button>
+  <button class="minus" onclick="quickMinus(500)">-500</button>
+  <button class="minus" onclick="quickMinus(1000)">-1000</button>
+  <button class="minus" onclick="quickMinus(1500)">-1500</button>
 
-<br><br>
+  <button class="minus" onclick="quickMinus(2000)">-2000</button>
+  <button class="minus" onclick="quickMinus(5000)">-5000</button>
 
-<input type="number" id="custom" placeholder="직접 입력">
+  <button class="plus" onclick="quickPlus(500)">+500</button>
+  <button class="plus" onclick="quickPlus(1000)">+1000</button>
+  <button class="plus" onclick="quickPlus(1500)">+1500</button>
 
-<br>
+  <button class="plus" onclick="quickPlus(2000)">+2000</button>
+  <button class="plus" onclick="quickPlus(5000)">+5000</button>
 
-<button onclick="customMinus()">차감</button>
+</div>
+
+<input type="text" id="display" readonly placeholder="숫자 입력">
+
+<div class="pad">
+  <button onclick="press(1)">1</button>
+  <button onclick="press(2)">2</button>
+  <button onclick="press(3)">3</button>
+
+  <button onclick="press(4)">4</button>
+  <button onclick="press(5)">5</button>
+  <button onclick="press(6)">6</button>
+
+  <button onclick="press(7)">7</button>
+  <button onclick="press(8)">8</button>
+  <button onclick="press(9)">9</button>
+
+  <button onclick="clearInput()">C</button>
+  <button onclick="press(0)">0</button>
+  <button onclick="backspace()">←</button>
+</div>
+
+<div class="action-row">
+  <button class="action-btn add-btn" onclick="addMoney()">+ 추가</button>
+  <button class="action-btn sub-btn" onclick="subtractMoney()">- 차감</button>
+</div>
+
+<div class="action-row">
+  <button class="action-btn reset-btn" onclick="resetAll()">초기화</button>
+</div>
+
+<div class="history">
+  <div class="history-title">사용 내역</div>
+  <div class="history-list" id="history"></div>
+</div>
+
+</div>
 
 </div>
 
 <script>
 
-let total = 0;
+let money = Number(localStorage.getItem("money")) || 0;
+let historyData = JSON.parse(localStorage.getItem("history")) || [];
 
-function render(){
-  document.getElementById("money").innerText =
-    total.toLocaleString() + "원";
+updateUI();
+renderHistory();
+
+function save(){
+  localStorage.setItem("money", money);
+  localStorage.setItem("history", JSON.stringify(historyData));
 }
 
-function startMoney(){
-  total = Number(document.getElementById("start").value);
-  render();
+function updateUI(){
+  const balance = document.getElementById("balance");
+  balance.innerText = money.toLocaleString() + "원";
 }
 
-function minus(value){
-  total -= value;
-  render();
+function shake(){
+  const card = document.querySelector(".card");
+  card.classList.add("shake");
+
+  setTimeout(()=>{
+    card.classList.remove("shake");
+  },150);
+
+  if(navigator.vibrate){
+    navigator.vibrate(30);
+  }
 }
 
-function customMinus(){
-  const value = Number(document.getElementById("custom").value);
-  total -= value;
-  render();
+function setStartMoney(){
+  const value = Number(document.getElementById("startMoney").value);
+
+  if(!value) return;
+
+  money = value;
+
+  addHistory("초기 금액 설정", value, true);
+
+  save();
+  updateUI();
+  shake();
+}
+
+function press(num){
+  document.getElementById("display").value += num;
+}
+
+function clearInput(){
+  document.getElementById("display").value = "";
+}
+
+function backspace(){
+  const display = document.getElementById("display");
+
+  display.value = display.value.slice(0,-1);
+}
+
+function addMoney(){
+
+  const value = Number(document.getElementById("display").value);
+
+  if(!value) return;
+
+  money += value;
+
+  addHistory("금액 추가", value, true);
+
+  clearInput();
+
+  save();
+  updateUI();
+  renderHistory();
+  shake();
+}
+
+function subtractMoney(){
+
+  const value = Number(document.getElementById("display").value);
+
+  if(!value) return;
+
+  money -= value;
+
+  addHistory("금액 차감", value, false);
+
+  clearInput();
+
+  save();
+  updateUI();
+  renderHistory();
+  shake();
+}
+
+function quickMinus(value){
+  money -= value;
+
+  addHistory("빠른 차감", value, false);
+
+  save();
+  updateUI();
+  renderHistory();
+  shake();
+}
+
+function quickPlus(value){
+  money += value;
+
+  addHistory("빠른 추가", value, true);
+
+  save();
+  updateUI();
+  renderHistory();
+  shake();
+}
+
+function addHistory(text, value, plus){
+
+  const now = new Date();
+
+  const time =
+    now.getHours().toString().padStart(2,"0")
+    + ":" +
+    now.getMinutes().toString().padStart(2,"0");
+
+  historyData.unshift({
+    text,
+    value,
+    plus,
+    time
+  });
+
+  if(historyData.length > 30){
+    historyData.pop();
+  }
+}
+
+function renderHistory(){
+
+  const history = document.getElementById("history");
+
+  history.innerHTML = "";
+
+  historyData.forEach(item=>{
+
+    history.innerHTML += `
+      <div class="item">
+        <div>
+          <div>${item.text}</div>
+          <small>${item.time}</small>
+        </div>
+
+        <div class="${item.plus ? 'green' : 'red'}">
+          ${item.plus ? '+' : '-'}
+          ${item.value.toLocaleString()}원
+        </div>
+      </div>
+    `;
+  });
+}
+
+function resetAll(){
+
+  if(confirm("초기화할까요?")){
+
+    money = 0;
+    historyData = [];
+
+    localStorage.removeItem("money");
+    localStorage.removeItem("history");
+
+    updateUI();
+    renderHistory();
+    clearInput();
+    shake();
+  }
 }
 
 </script>
