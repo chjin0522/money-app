@@ -380,6 +380,9 @@ function resetAll(){
     localStorage.removeItem("money");
     localStorage.removeItem("history");
 
+    saveMoneyToFirebase(0);
+    saveHistoryToFirebase([]);
+
     updateUI();
     renderHistory();
     clearInput();
@@ -430,6 +433,9 @@ function addHistory(text, value, plus){
   }
 
   localStorage.setItem("history", JSON.stringify(historyData));
+
+  saveHistoryToFirebase(historyData);
+
 }
 
 function renderHistory(){
@@ -478,6 +484,8 @@ function toggleHistory(){
 
 </script>
 
+<!-- Firebase script 부분 전체를 아래 코드로 교체 -->
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -512,10 +520,17 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const moneyRef = ref(db, "money");
+const historyRef = ref(db, "history");
 
 window.saveMoneyToFirebase = function(value){
 
   set(moneyRef, value);
+
+};
+
+window.saveHistoryToFirebase = function(history){
+
+  set(historyRef, history);
 
 };
 
@@ -529,11 +544,29 @@ window.listenMoney = function(callback){
 
 };
 
+window.listenHistory = function(callback){
+
+  onValue(historyRef, (snapshot)=>{
+
+    callback(snapshot.val() || []);
+
+  });
+
+};
+
 listenMoney((value)=>{
 
   money = value;
 
   updateUI();
+
+});
+
+listenHistory((value)=>{
+
+  historyData = value;
+
+  renderHistory();
 
 });
 
