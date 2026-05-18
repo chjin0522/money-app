@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>나만의 금액 앱</title>
+<title>솔테크 금액 앱</title>
 
 <style>
 
@@ -239,7 +239,7 @@ button:active{
   <button class="action-btn sub-btn" onclick="subtractMoney()">- 차감</button>
 </div>
 
-  <div class="action-row">
+<div class="action-row">
   <button class="action-btn reset-btn" onclick="resetAll()">
     초기화
   </button>
@@ -296,6 +296,7 @@ function save(){
   saveMoneyToFirebase(money);
 
 }
+
 function updateUI(){
   const balance = document.getElementById("balance");
   balance.innerText = money.toLocaleString() + "원";
@@ -325,21 +326,12 @@ function setStartMoney(){
 
   save();
   updateUI();
+  renderHistory();
   shake();
-}
-
-function press(num){
-  document.getElementById("display").value += num;
 }
 
 function clearInput(){
   document.getElementById("display").value = "";
-}
-
-function backspace(){
-  const display = document.getElementById("display");
-
-  display.value = display.value.slice(0,-1);
 }
 
 function addMoney(){
@@ -377,6 +369,7 @@ function subtractMoney(){
   renderHistory();
   shake();
 }
+
 function resetAll(){
 
   if(confirm("초기화할까요?")){
@@ -389,14 +382,11 @@ function resetAll(){
 
     updateUI();
     renderHistory();
-
-    document.getElementById("display").value = "";
-
+    clearInput();
     shake();
   }
 }
 
-  
 function quickMinus(value){
   money -= value;
 
@@ -438,6 +428,8 @@ function addHistory(text, value, plus){
   if(historyData.length > 30){
     historyData.pop();
   }
+
+  localStorage.setItem("history", JSON.stringify(historyData));
 }
 
 function renderHistory(){
@@ -464,24 +456,7 @@ function renderHistory(){
   });
 }
 
-function resetAll(){
-
-  if(confirm("초기화할까요?")){
-
-    money = 0;
-    historyData = [];
-
-    localStorage.removeItem("money");
-    localStorage.removeItem("history");
-
-    updateUI();
-    renderHistory();
-    clearInput();
-    shake();
-  }
-}
-
-  function toggleHistory(){
+function toggleHistory(){
 
   const history =
     document.getElementById("history");
@@ -500,9 +475,10 @@ function resetAll(){
     icon.innerText = "+";
   }
 }
+
 </script>
 
-  <script type="module">
+<script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
@@ -553,13 +529,15 @@ window.listenMoney = function(callback){
 
 };
 
-</script>
-  listenMoney((value)=>{
+listenMoney((value)=>{
 
   money = value;
 
   updateUI();
 
 });
+
+</script>
+
 </body>
 </html>
